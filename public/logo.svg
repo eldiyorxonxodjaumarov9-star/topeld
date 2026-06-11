@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 500" fill="none" role="img" aria-label="TOP ELD SOLUTIONS INC">
+  <g fill="#E85700">
+    <path
+      d="M28 286C74 352 138 342 196 292C254 242 318 188 392 132C452 86 520 58 592 36L572 68C508 96 448 128 388 172C318 224 252 276 196 318C140 360 84 368 36 334Z"
+    />
+    <path
+      d="M252 64H388V104H334V252H306V104H252V64Z"
+    />
+    <text
+      x="320"
+      y="358"
+      font-family="Georgia, 'Times New Roman', serif"
+      font-size="74"
+      font-weight="700"
+      text-anchor="middle"
+    >
+      TOP ELD
+    </text>
+    <text
+      x="320"
+      y="412"
+      font-family="Arial, Helvetica, sans-serif"
+      font-size="28"
+      font-weight="400"
+      letter-spacing="0.34em"
+      text-anchor="middle"
+    >
+      SOLUTIONS INC
+    </text>
+  </g>
+</svg>

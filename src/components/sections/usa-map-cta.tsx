@@ -1,0 +1,109 @@
+"use client";
+
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ArrowRight } from "lucide-react";
+import { ContactUsButton } from "@/components/ui/contact-us-button";
+import { SectionWrapper } from "@/components/motion/section-wrapper";
+
+function UsaMapSvg() {
+  return (
+    <svg
+      viewBox="0 0 400 250"
+      className="h-auto w-full max-w-md drop-shadow-[0_0_40px_rgba(34,197,94,0.35)]"
+      aria-hidden
+    >
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+      <path
+        d="M50 120 L80 80 L120 70 L160 75 L200 65 L240 80 L280 90 L320 100 L350 110 L340 140 L300 160 L260 170 L220 180 L180 175 L140 165 L100 150 L60 140 Z"
+        fill="none"
+        stroke="#f97316"
+        strokeWidth="2"
+        filter="url(#glow)"
+        opacity="0.9"
+      />
+      <path
+        d="M80 100 L120 95 L160 100 L200 95 L240 105 L280 115 L300 125 L280 145 L240 155 L200 160 L160 155 L120 145 L90 130 Z"
+        fill="rgba(34,197,94,0.15)"
+        stroke="#4ade80"
+        strokeWidth="1.5"
+      />
+      {[
+        [120, 110],
+        [180, 105],
+        [240, 115],
+        [200, 140],
+        [150, 130],
+      ].map(([cx, cy], i) => (
+        <circle
+          key={i}
+          cx={cx}
+          cy={cy}
+          r="4"
+          fill="#4ade80"
+          className="animate-pulse"
+          style={{ animationDelay: `${i * 0.2}s` }}
+        />
+      ))}
+    </svg>
+  );
+}
+
+export function UsaMapCta() {
+  return (
+    <section
+      id="contact"
+      className="relative overflow-hidden bg-slate-950 py-20 sm:py-28"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(22,101,52,0.35)_0%,_transparent_65%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(34,197,94,0.15)_0%,_transparent_50%)]" />
+
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+          <SectionWrapper>
+            <p className="text-sm font-semibold uppercase tracking-widest text-orange-400">
+              Nationwide Coverage
+            </p>
+            <h2 className="font-heading mt-4 text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+              Empowering{" "}
+              <span className="text-orange-400">1000+</span> trucking companies
+            </h2>
+            <p className="mt-6 max-w-lg text-lg text-slate-400">
+              From coast to coast, TOP ELD SOLUTIONS delivers compliance, dispatch, and
+              back-office support that keeps American carriers moving forward.
+            </p>
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+              <ContactUsButton size="lg" />
+              <Link
+                href="#services"
+                className="group inline-flex h-12 items-center gap-2 rounded-xl border border-white/20 px-8 font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                View Services
+                <ArrowRight className="size-4 group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          </SectionWrapper>
+
+          <SectionWrapper delay={0.15} className="flex justify-center lg:justify-end">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <UsaMapSvg />
+            </motion.div>
+          </SectionWrapper>
+        </div>
+      </div>
+    </section>
+  );
+}

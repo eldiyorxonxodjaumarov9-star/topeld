@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ALGO GROUP — Premium Trucking Logistics Landing Page
 
-## Getting Started
+Enterprise-grade trucking outsourcing website inspired by leading US carrier support companies.
 
-First, run the development server:
+## Tech Stack
+
+- Next.js App Router · TypeScript · Tailwind CSS v4
+- shadcn/ui · Framer Motion · Lucide React
+
+## Run
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Page Sections
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Hero** — Fullscreen trucking background, green accents, CTAs
+2. **About** — Image collage, stats counters (300+, 1000+, 3000+, 7+)
+3. **Services** — 7 image cards with hover zoom
+4. **Company Showcase** — Full-width office building
+5. **Features Table** — Features · Compliance · Service List
+6. **Video** — Company overview + video thumbnail
+7. **Team** — Employee cards with social links
+8. **Trusted Companies** — Logo marquee carousel
+9. **Testimonials** — Review carousel
+10. **Blog / News** — Industry articles
+11. **USA Map CTA** — Dark section, glowing map, 1000+ companies
+12. **Footer** — Services, Products, Support
 
-## Learn More
+## Widgets
 
-To learn more about Next.js, take a look at the following resources:
+- **TOP ELD BOT** — Floating chatbot (auto-opens 3s)
+- **Contact Us** — Modal popup with form validation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Design
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- White corporate background
+- Dark green accent (`#166534`)
+- Glassmorphism navbar
+- Scroll reveal animations
+- Mobile-first responsive layout
