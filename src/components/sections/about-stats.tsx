@@ -2,21 +2,78 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { AnimatedCounter } from "@/components/motion/animated-counter";
 import { SectionWrapper } from "@/components/motion/section-wrapper";
 import { ABOUT_STATS } from "@/lib/constants";
-import { IMAGES } from "@/lib/images";
+import { IMAGES, VIDEOS } from "@/lib/images";
 import { cn } from "@/lib/utils";
 import { useAboutContactTrigger } from "@/hooks/use-about-contact-trigger";
 
 const COLLAGE = {
-  driver: { src: IMAGES.driver, alt: "Professional truck driver" },
-  dashboard: { src: IMAGES.dashboard, alt: "Truck dashboard" },
-  meeting: { src: IMAGES.meeting, alt: "Business meeting" },
-  compliance: { src: IMAGES.compliance, alt: "Safety compliance documents" },
+  dashboard: { src: IMAGES.driver, alt: "Professional truck driver" },
+  meeting: { src: IMAGES.meeting, alt: "Fleet monitoring and dispatch center" },
+  compliance: { src: IMAGES.compliance, alt: "Safety compliance operations" },
 } as const;
+
+function CollageVideoTile({
+  src,
+  className,
+  index,
+}: {
+  src: string;
+  className?: string;
+  index: number;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const startPlayback = () => {
+      video.playbackRate = 1;
+      void video.play().catch(() => {});
+    };
+
+    video.addEventListener("loadeddata", startPlayback);
+    video.addEventListener("canplay", startPlayback);
+
+    return () => {
+      video.removeEventListener("loadeddata", startPlayback);
+      video.removeEventListener("canplay", startPlayback);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.08 }}
+      className={cn(
+        "group relative min-h-[140px] overflow-hidden rounded-2xl shadow-lg ring-1 ring-orange-900/5 sm:min-h-[160px]",
+        className
+      )}
+    >
+      <div className="absolute inset-0 z-10 bg-orange-900/10 opacity-0 transition-opacity group-hover:opacity-100" />
+      <video
+        ref={videoRef}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        aria-label="Trucking operations video"
+      >
+        <source src={src} type="video/mp4" />
+      </video>
+    </motion.div>
+  );
+}
 
 function CollageTile({
   src,
@@ -45,7 +102,7 @@ function CollageTile({
         src={src}
         alt={alt}
         fill
-        className="object-cover transition-transform duration-500 group-hover:scale-105"
+        className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
         sizes="(max-width: 1024px) 50vw, 280px"
       />
     </motion.div>
@@ -61,12 +118,16 @@ export function AboutStats() {
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <SectionWrapper className="order-2 lg:order-1">
             <div className="grid grid-cols-2 grid-rows-2 gap-3 sm:gap-4">
-              <CollageTile {...COLLAGE.driver} className="row-span-2 min-h-[300px]" index={0} />
+              <CollageVideoTile
+                src={VIDEOS.aboutCollage}
+                className="row-span-2 min-h-[280px] sm:min-h-[320px] lg:min-h-[360px]"
+                index={0}
+              />
               <CollageTile {...COLLAGE.dashboard} index={1} />
               <CollageTile {...COLLAGE.meeting} index={2} />
             </div>
             <div className="mt-3 sm:mt-4">
-              <CollageTile {...COLLAGE.compliance} className="min-h-[160px]" index={3} />
+              <CollageTile {...COLLAGE.compliance} className="min-h-[140px] sm:min-h-[160px]" index={3} />
             </div>
           </SectionWrapper>
 

@@ -7,10 +7,10 @@ export const IMAGES = {
   documents: "/images/documents.jpg",
   truckRoad: "/images/truck-highway.jpg",
   accounting: "/images/accounting.jpg",
-  driver: "/images/driver.jpg",
-  dashboard: "/images/dashboard.jpg",
-  meeting: "/images/meeting.jpg",
-  compliance: "/images/compliance.jpg",
+  driver: "/images/about-driver.png",
+  dashboard: "/images/about-driver.png",
+  meeting: "/images/about-monitoring.png",
+  compliance: "/images/about-monitoring.png",
   office: "/images/office.jpg",
   videoThumb: "/images/video-thumb.jpg",
   team1: "/images/team1.jpg",
@@ -24,4 +24,5 @@ export const IMAGES = {
 
 export const VIDEOS = {
   heroTruck: "/hero-truck.mp4",
+  aboutCollage: "/about/about-collage.mp4",
 } as const;
