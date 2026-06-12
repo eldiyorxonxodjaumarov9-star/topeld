@@ -20,7 +20,7 @@ export function TrustedCompanies() {
         </SectionWrapper>
       </div>
 
-      <div className="relative mt-12">
+      <div className="relative mt-12 overflow-hidden">
         <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-slate-50 to-transparent" />
         <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-slate-50 to-transparent" />
         <motion.div

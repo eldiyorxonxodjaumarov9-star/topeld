@@ -118,7 +118,7 @@ export function EldChatbot() {
   const showStep2 = step === 2;
 
   return (
-    <div className="fixed bottom-4 right-4 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-4 right-4 left-4 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:left-auto sm:right-6">
       <AnimatePresence mode="wait">
         {(view === "closed" || view === "minimized") && (
           <motion.button
@@ -150,7 +150,7 @@ export function EldChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="w-[calc(100vw-2rem)] max-w-[380px] overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl shadow-orange-900/20 backdrop-blur-xl"
+            className="w-full max-w-[380px] overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl shadow-orange-900/20 backdrop-blur-xl"
           >
             {/* Green header */}
             <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-orange-400 px-4 py-3">

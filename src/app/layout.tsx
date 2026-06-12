@@ -73,9 +73,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${plusJakarta.variable} ${playfair.variable} scroll-smooth scroll-pt-28`}
+      className={`${inter.variable} ${plusJakarta.variable} ${playfair.variable} scroll-smooth scroll-pt-28 overflow-x-clip`}
     >
-      <body className="min-h-screen font-sans antialiased">
+      <body className="min-h-screen overflow-x-clip font-sans antialiased">
         <ContactModalProvider>
           <PageLoader>{children}</PageLoader>
         </ContactModalProvider>

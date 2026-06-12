@@ -33,9 +33,11 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+
     void motionControls.start({
-      scale: [1.05, 1.14, 1.05],
-      x: [32, -12, 32],
+      scale: isMobile ? [1, 1.03, 1] : [1.05, 1.1, 1.05],
+      x: isMobile ? [0, 0, 0] : [16, -8, 16],
       transition: {
         duration: 22,
         repeat: Infinity,
@@ -47,7 +49,7 @@ export function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen min-h-[100dvh] items-center overflow-hidden"
+      className="relative flex min-h-screen min-h-[100dvh] items-center overflow-hidden overflow-x-clip"
     >
       <motion.div animate={motionControls} className="absolute inset-0 will-change-transform">
         <video
@@ -91,7 +93,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="font-heading text-[2.35rem] font-bold leading-[1.06] tracking-tight text-white sm:text-5xl lg:text-[3.35rem] xl:text-6xl"
+            className="font-heading text-[clamp(1.85rem,7vw,2.35rem)] font-bold leading-[1.06] tracking-tight text-balance text-white sm:text-5xl lg:text-[3.35rem] xl:text-6xl"
           >
             Experience the power of{" "}
             <span className="text-orange-400">Business Transformation</span>
@@ -111,7 +113,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.65, delay: 0.4 }}
-            className="mt-10 flex flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center"
+            className="mt-10 flex min-w-0 flex-col gap-5 sm:flex-row sm:flex-wrap sm:items-center"
           >
             <ContactUsButton
               size="lg"

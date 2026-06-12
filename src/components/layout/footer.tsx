@@ -31,7 +31,7 @@ const SOCIAL = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white">
+    <footer className="overflow-x-clip border-t border-slate-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-5">
           <div className="lg:col-span-2">
@@ -129,25 +129,25 @@ export function Footer() {
                 <MapPin className="mt-0.5 size-4 shrink-0 text-orange-600" />
                 {COMPANY.address}
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="size-4 shrink-0 text-orange-600" />
+              <li className="flex min-w-0 items-start gap-2">
+                <Phone className="mt-0.5 size-4 shrink-0 text-orange-600" />
                 <a
                   href={`tel:+1${COMPANY.phone.replace(/\D/g, "")}`}
-                  className="hover:text-orange-600"
+                  className="min-w-0 break-words hover:text-orange-600"
                 >
                   {COMPANY.phone}
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Mail className="size-4 shrink-0 text-orange-600" />
+              <li className="flex min-w-0 items-start gap-2">
+                <Mail className="mt-0.5 size-4 shrink-0 text-orange-600" />
                 <a
                   href={`mailto:${COMPANY.email}`}
-                  className="hover:text-orange-600"
+                  className="min-w-0 break-all hover:text-orange-600"
                 >
                   {COMPANY.email}
                 </a>
               </li>
-              <li className="flex items-center gap-2">
+              <li className="flex min-w-0 items-start gap-2">
                 <TelegramIcon className="size-4 shrink-0 text-orange-600" />
                 <a
                   href={COMPANY.telegram}
@@ -163,7 +163,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 sm:flex-row">
-          <p className="text-sm text-slate-500">
+          <p className="text-center text-sm text-slate-500 sm:text-left">
             © {new Date().getFullYear()} {COMPANY.name}. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm text-slate-500">

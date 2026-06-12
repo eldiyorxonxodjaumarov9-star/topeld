@@ -19,7 +19,7 @@ function RowCell({
   return (
     <div
       className={cn(
-        "flex min-h-[4.5rem] items-center border-b border-slate-200/80 px-5 py-4 text-sm leading-snug sm:min-h-[5rem] sm:px-6 sm:text-[0.95rem]",
+        "flex min-h-[4.5rem] min-w-0 items-center break-words border-b border-slate-200/80 px-5 py-4 text-sm leading-snug sm:min-h-[5rem] sm:px-6 sm:text-[0.95rem]",
         striped ? "bg-slate-50/90" : "bg-white",
         className
       )}
@@ -49,9 +49,9 @@ export function FeaturesTable() {
           transition={{ duration: 0.5 }}
           className="overflow-hidden rounded-2xl border border-slate-200/80 shadow-xl shadow-slate-900/5"
         >
-          <div className="grid md:grid-cols-3">
+          <div className="grid min-w-0 md:grid-cols-3">
             {/* Features */}
-            <div className="border-b border-slate-200/80 md:border-b-0 md:border-r">
+            <div className="min-w-0 border-b border-slate-200/80 md:border-b-0 md:border-r">
               <div className="flex min-h-[3.75rem] items-center border-b border-slate-200/80 bg-white px-5 py-4 sm:px-6">
                 <h3 className="font-heading text-lg font-bold text-orange-600 sm:text-xl">
                   Features
@@ -65,7 +65,7 @@ export function FeaturesTable() {
             </div>
 
             {/* Competitors */}
-            <div className="border-b border-slate-200/80 md:border-b-0 md:border-r">
+            <div className="min-w-0 border-b border-slate-200/80 md:border-b-0 md:border-r">
               <div className="flex min-h-[3.75rem] items-center justify-between border-b border-slate-800/20 bg-slate-900 px-5 py-4 sm:px-6">
                 <h3 className="font-heading text-base font-bold text-white sm:text-lg">
                   Competitors
@@ -80,7 +80,7 @@ export function FeaturesTable() {
             </div>
 
             {/* TOP ELD */}
-            <div>
+            <div className="min-w-0">
               <div className="flex min-h-[3.75rem] flex-col justify-center gap-1 border-b border-orange-700/30 bg-orange-600 px-5 py-3 sm:px-6">
                 <Logo
                   width={640}

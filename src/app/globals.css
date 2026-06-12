@@ -52,9 +52,17 @@
   }
   html {
     scroll-behavior: smooth;
+    overflow-x: clip;
   }
   body {
     @apply bg-background text-foreground antialiased;
+    overflow-x: clip;
+    min-width: 0;
+  }
+  img,
+  video,
+  svg {
+    max-width: 100%;
   }
 }
 

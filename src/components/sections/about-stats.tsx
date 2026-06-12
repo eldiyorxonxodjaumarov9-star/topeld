@@ -113,7 +113,7 @@ export function AboutStats() {
   useAboutContactTrigger();
 
   return (
-    <section id="about" className="bg-white py-20 sm:py-28">
+    <section id="about" className="overflow-x-clip bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <SectionWrapper className="order-2 lg:order-1">
@@ -135,7 +135,7 @@ export function AboutStats() {
             <p className="text-sm font-semibold uppercase tracking-widest text-orange-600">
               About Us
             </p>
-            <h2 className="font-heading mt-4 text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
+            <h2 className="font-heading mt-4 text-balance text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-[2.5rem]">
               <span className="text-orange-600">Experience</span> and{" "}
               <span className="text-orange-600">successful</span> actions guarantee
               that your <span className="text-orange-600">MC</span> achieves the{" "}

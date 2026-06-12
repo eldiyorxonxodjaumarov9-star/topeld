@@ -54,9 +54,9 @@ export function Navbar() {
   );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header className="fixed inset-x-0 top-0 z-50 overflow-x-clip">
       {/* Mobile */}
-      <div className="flex items-center justify-between gap-3 px-4 pt-4 sm:px-5 lg:hidden">
+      <div className="flex min-w-0 items-center justify-between gap-2 px-4 pt-4 sm:gap-3 sm:px-5 lg:hidden">
         <Link
           href="#home"
           onClick={() => setMobileOpen(false)}
@@ -74,8 +74,8 @@ export function Navbar() {
               priority
               onDark={!isSolid}
               className={cn(
-                "w-auto max-w-[16rem] object-contain object-left transition-[height] duration-300 sm:max-w-[18rem]",
-                isSolid ? "h-28 sm:h-32" : "h-32 sm:h-36"
+                "h-auto w-auto max-w-[calc(100vw-5.5rem)] object-contain object-left transition-[max-height] duration-300 sm:max-w-[18rem]",
+                isSolid ? "max-h-24 sm:max-h-28" : "max-h-28 sm:max-h-32"
               )}
             />
           </motion.div>

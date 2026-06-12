@@ -7,7 +7,7 @@ import { IMAGES } from "@/lib/images";
 
 export function CompanyShowcase() {
   return (
-    <section className="relative">
+    <section className="relative overflow-x-clip">
       <SectionWrapper className="relative">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative overflow-hidden rounded-2xl shadow-2xl shadow-slate-900/15">

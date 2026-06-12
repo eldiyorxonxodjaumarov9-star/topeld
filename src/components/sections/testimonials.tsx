@@ -14,7 +14,7 @@ import { TESTIMONIALS } from "@/lib/constants";
 
 export function Testimonials() {
   return (
-    <section className="bg-white py-20 sm:py-28">
+    <section className="overflow-x-clip bg-white py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionWrapper>
           <SectionHeading
@@ -24,8 +24,8 @@ export function Testimonials() {
           />
         </SectionWrapper>
 
-        <SectionWrapper delay={0.1} className="mt-14">
-          <Carousel opts={{ align: "start", loop: true }} className="w-full">
+        <SectionWrapper delay={0.1} className="mt-14 min-w-0">
+          <Carousel opts={{ align: "start", loop: true }} className="w-full min-w-0 overflow-hidden">
             <CarouselContent className="-ml-4">
               {TESTIMONIALS.map((t) => (
                 <CarouselItem

@@ -44,7 +44,7 @@ export function UsaMapCta() {
               From coast to coast, TOP ELD SOLUTIONS delivers compliance, dispatch, and
               back-office support that keeps American carriers moving forward.
             </p>
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="mt-10 flex w-full min-w-0 flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
               <ContactUsButton size="lg" />
               <Link
                 href="#services"
@@ -56,7 +56,7 @@ export function UsaMapCta() {
             </div>
           </SectionWrapper>
 
-          <SectionWrapper delay={0.15} className="flex justify-center lg:justify-end">
+          <SectionWrapper delay={0.15} className="flex min-w-0 justify-center lg:justify-end">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
