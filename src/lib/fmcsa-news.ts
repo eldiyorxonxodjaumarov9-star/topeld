@@ -3,6 +3,7 @@ import {
   FMCSA_NEWSROOM_URL,
   FMCSA_NEWS_RSS_URL,
   FMCSA_PRESS_RELEASES_URL,
+  JINA_READER_BASE,
   NEWS_FETCH_LIMIT,
   NEWS_REVALIDATE_SECONDS,
 } from "@/config/news";
@@ -316,6 +317,192 @@ export function getFallbackArticleBySlug(
   };
 }
 
+function jinaReaderUrl(targetUrl: string): string {
+  return `${JINA_READER_BASE}${targetUrl}`;
+}
+
+async function fetchJinaMarkdown(targetUrl: string): Promise<string> {
+  const response = await fetch(jinaReaderUrl(targetUrl), {
+    headers: {
+      Accept: "text/plain",
+      "User-Agent": FETCH_HEADERS["User-Agent"],
+    },
+    next: { revalidate: NEWS_REVALIDATE_SECONDS },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Jina reader ${response.status} for ${targetUrl}`);
+  }
+
+  const text = await response.text();
+  if (text.includes("Access Denied") || text.length < 200) {
+    throw new Error(`Jina reader blocked for ${targetUrl}`);
+  }
+
+  return text;
+}
+
+function formatInlineMarkdown(text: string): string {
+  return decodeHtml(
+    text
+      .replace(/!\[[^\]]*\]\([^)]+\)/g, "")
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label: string, href: string) => {
+        if (href.startsWith("mailto:")) return label;
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      })
+      .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*([^*]+)\*/g, "<em>$1</em>")
+      .trim()
+  );
+}
+
+function markdownToArticleHtml(markdown: string): string {
+  const html: string[] = [];
+  let inList = false;
+
+  for (const rawLine of markdown.split("\n")) {
+    const line = rawLine.trim();
+    if (!line) continue;
+
+    if (
+      line.startsWith("[Skip to") ||
+      line.includes("USA Banner") ||
+      line.startsWith("![Image") ||
+      /^#{1,6}\s*USA Banner/i.test(line)
+    ) {
+      continue;
+    }
+
+    if (line.startsWith("* ") || line.startsWith("*   ")) {
+      if (!inList) {
+        html.push("<ul>");
+        inList = true;
+      }
+      html.push(`<li>${formatInlineMarkdown(line.replace(/^\*\s+/, ""))}</li>`);
+      continue;
+    }
+
+    if (inList) {
+      html.push("</ul>");
+      inList = false;
+    }
+
+    if (line.startsWith("## ")) {
+      html.push(`<h2>${formatInlineMarkdown(line.slice(3))}</h2>`);
+      continue;
+    }
+
+    if (line.startsWith("### ")) {
+      html.push(`<h3>${formatInlineMarkdown(line.slice(4))}</h3>`);
+      continue;
+    }
+
+    html.push(`<p>${formatInlineMarkdown(line)}</p>`);
+  }
+
+  if (inList) html.push("</ul>");
+  return html.join("\n");
+}
+
+function extractJinaArticleBody(raw: string): string {
+  const marker = "Markdown Content:";
+  const start = raw.includes(marker) ? raw.indexOf(marker) + marker.length : 0;
+  const content = raw.slice(start).trim();
+  const lines = content.split("\n");
+
+  const bodyStart = lines.findIndex((line) => {
+    const trimmed = line.trim();
+    return (
+      /^## /.test(trimmed) &&
+      !trimmed.includes("USA Banner") &&
+      !trimmed.includes("Skip to main")
+    );
+  });
+
+  return bodyStart >= 0 ? lines.slice(bodyStart).join("\n") : content;
+}
+
+function extractJinaArticleImage(markdown: string): string {
+  const images = [
+    ...markdown.matchAll(/!\[[^\]]*\]\((https:\/\/www\.fmcsa\.dot\.gov\/[^)]+\.(?:jpg|jpeg|png|webp|gif)[^)]*)\)/gi),
+  ].map((match) => match[1]);
+
+  const photo = images.find(
+    (url) => !/logo\.png|us_flag|icon-https|seal_dot/i.test(url)
+  );
+
+  return photo ? toAbsoluteUrl(photo) : FMCSA_DEFAULT_IMAGE;
+}
+
+export function parseJinaPressReleasesMarkdown(
+  markdown: string,
+  limit: number
+): NewsPost[] {
+  const items: NewsPost[] = [];
+  const pattern =
+    /([A-Za-z]+ \d{1,2}, \d{4})\s*\n+## \[([^\]]+)\]\((https:\/\/www\.fmcsa\.dot\.gov\/newsroom\/[^)]+)\)\s*\n+([^\n#]+)/g;
+
+  let match: RegExpExecArray | null;
+  while ((match = pattern.exec(markdown)) !== null && items.length < limit) {
+    const url = decodeHtml(match[3]);
+    const title = decodeHtml(match[2]);
+    const slug = slugFromNewsUrl(url);
+
+    if (!title || !slug || url.includes("news-archive")) continue;
+
+    items.push({
+      slug,
+      title,
+      excerpt: stripHtml(match[4]).slice(0, 220),
+      date: decodeHtml(match[1]),
+      image: FMCSA_DEFAULT_IMAGE,
+      url,
+      source: "fmcsa",
+    });
+  }
+
+  return items;
+}
+
+export function parseJinaArticleMarkdown(
+  raw: string,
+  slug: string
+): FmcsaArticleDetail | null {
+  const titleMatch = raw.match(/^Title:\s*(.+)$/m);
+  const title = titleMatch?.[1]?.trim() ?? "";
+
+  const bodyMarkdown = extractJinaArticleBody(raw);
+  const bodyHtml = markdownToArticleHtml(bodyMarkdown);
+
+  if (!title || !bodyHtml) return null;
+
+  const dateMatch = bodyMarkdown.match(
+    /^([A-Za-z]+ \d{1,2}, \d{4})\s*$/m
+  );
+
+  return {
+    slug,
+    title: decodeHtml(title),
+    date: dateMatch?.[1] ?? "Recent",
+    excerpt: stripHtml(bodyHtml).slice(0, 220),
+    image: extractJinaArticleImage(raw),
+    url: `${FMCSA_BASE_URL}/newsroom/${slug}`,
+    source: "fmcsa",
+    bodyHtml,
+  };
+}
+
+async function fetchFmcsaViaJina(limit: number): Promise<NewsPost[]> {
+  const markdown = await fetchJinaMarkdown(FMCSA_PRESS_RELEASES_URL);
+  const items = parseJinaPressReleasesMarkdown(markdown, limit);
+
+  if (items.length === 0) {
+    throw new Error("Jina reader returned no FMCSA press releases");
+  }
+
+  return items;
+}
+
 async function fetchFmcsaPressReleases(limit: number): Promise<NewsPost[]> {
   const response = await fetch(FMCSA_PRESS_RELEASES_URL, {
     headers: FETCH_HEADERS,
@@ -378,6 +565,13 @@ export function isFmcsaLogoImage(url: string): boolean {
 export async function getFmcsaNews(
   limit = NEWS_FETCH_LIMIT
 ): Promise<NewsPost[]> {
+  try {
+    const jinaItems = await fetchFmcsaViaJina(limit);
+    if (jinaItems.length > 0) return jinaItems;
+  } catch (error) {
+    console.error("[fmcsa-news] Jina reader fetch failed:", error);
+  }
+
   try {
     const pressItems = await fetchFmcsaPressReleases(limit);
     if (pressItems.length > 0) return pressItems;
@@ -471,8 +665,18 @@ export async function getFmcsaArticleBySlug(
     return fallbackArticle;
   }
 
+  const articleUrl = `${FMCSA_BASE_URL}/newsroom/${slug}`;
+
   try {
-    const response = await fetch(`${FMCSA_BASE_URL}/newsroom/${slug}`, {
+    const markdown = await fetchJinaMarkdown(articleUrl);
+    const jinaArticle = parseJinaArticleMarkdown(markdown, slug);
+    if (jinaArticle) return jinaArticle;
+  } catch (error) {
+    console.error("[fmcsa-news] Jina article fetch failed:", slug, error);
+  }
+
+  try {
+    const response = await fetch(articleUrl, {
       headers: FETCH_HEADERS,
       next: { revalidate: NEWS_REVALIDATE_SECONDS },
     });

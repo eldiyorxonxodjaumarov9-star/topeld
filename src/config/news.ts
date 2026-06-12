@@ -14,3 +14,6 @@ export const FMCSA_BASE_URL = "https://www.fmcsa.dot.gov";
 export const NEWS_REVALIDATE_SECONDS = 3600;
 
 export const NEWS_FETCH_LIMIT = 6;
+
+/** FMCSA Cloudflare 403 ni aylanib o‘tish — Jina Reader proxy */
+export const JINA_READER_BASE = "https://r.jina.ai/";
