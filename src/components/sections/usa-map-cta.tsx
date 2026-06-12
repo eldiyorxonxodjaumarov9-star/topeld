@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -8,52 +9,15 @@ import { SectionWrapper } from "@/components/motion/section-wrapper";
 
 function UsaMapSvg() {
   return (
-    <svg
-      viewBox="0 0 400 250"
-      className="h-auto w-full max-w-md drop-shadow-[0_0_40px_rgba(34,197,94,0.35)]"
+    <Image
+      src="/usa-map.svg"
+      alt=""
+      width={640}
+      height={384}
+      unoptimized
+      className="h-auto w-full max-w-lg drop-shadow-[0_0_40px_rgba(34,197,94,0.35)]"
       aria-hidden
-    >
-      <defs>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="blur" />
-          <feMerge>
-            <feMergeNode in="blur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <path
-        d="M50 120 L80 80 L120 70 L160 75 L200 65 L240 80 L280 90 L320 100 L350 110 L340 140 L300 160 L260 170 L220 180 L180 175 L140 165 L100 150 L60 140 Z"
-        fill="none"
-        stroke="#f97316"
-        strokeWidth="2"
-        filter="url(#glow)"
-        opacity="0.9"
-      />
-      <path
-        d="M80 100 L120 95 L160 100 L200 95 L240 105 L280 115 L300 125 L280 145 L240 155 L200 160 L160 155 L120 145 L90 130 Z"
-        fill="rgba(34,197,94,0.15)"
-        stroke="#4ade80"
-        strokeWidth="1.5"
-      />
-      {[
-        [120, 110],
-        [180, 105],
-        [240, 115],
-        [200, 140],
-        [150, 130],
-      ].map(([cx, cy], i) => (
-        <circle
-          key={i}
-          cx={cx}
-          cy={cy}
-          r="4"
-          fill="#4ade80"
-          className="animate-pulse"
-          style={{ animationDelay: `${i * 0.2}s` }}
-        />
-      ))}
-    </svg>
+    />
   );
 }
 
