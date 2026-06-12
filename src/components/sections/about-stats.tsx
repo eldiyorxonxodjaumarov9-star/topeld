@@ -144,8 +144,8 @@ export function AboutStats() {
             <p className="mt-6 text-lg leading-relaxed text-slate-600">
               Our company is made up of experienced and professional experts in
               the trucking industry who excel at providing top-notch Dispatch,
-              Safety, Accounting, and Hiring services. We serve the transportation
-              sector both in the USA and worldwide.
+              Safety, Accounting, ELD monitoring and Hiring services. We serve the
+              transportation sector both in the USA and worldwide.
             </p>
             <Link
               href="#services"
