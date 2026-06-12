@@ -260,35 +260,45 @@ export const TRUSTED_COMPANIES = [
 
 export const TESTIMONIALS = [
   {
-    name: "Marcus Johnson",
-    role: "Owner-Operator",
-    company: "Johnson Freight LLC",
+    name: "Mansour Mazen Husni",
+    role: "Company Owner",
     quote:
       "TOP ELD SOLUTIONS transformed how we handle compliance. Their ELD and IFTA support saved us countless hours and kept us audit-ready.",
     rating: 5,
   },
   {
-    name: "Sarah Mitchell",
-    role: "Fleet Manager",
-    company: "Midwest Haulers Inc.",
+    name: "Anwar Ahmed Milhem",
+    role: "Company Owner",
     quote:
       "The dispatch team is exceptional — professional, responsive, and they genuinely understand the trucking business.",
     rating: 5,
   },
   {
-    name: "David Chen",
-    role: "CEO",
-    company: "Chen Logistics Group",
+    name: "Abdillahi Niman Abdi",
+    role: "Company Owner",
     quote:
       "From MC setup to accounting, TOP ELD SOLUTIONS is our one-stop partner. Premium service at a fraction of in-house cost.",
     rating: 5,
   },
   {
-    name: "Angela Torres",
-    role: "Operations Director",
-    company: "Torres Transport Co.",
+    name: "Sevar Hazim Tomka",
+    role: "Company Owner",
     quote:
       "24/7 support isn't marketing fluff here — they answer at 2 AM when we need them. That's why we've stayed for 4 years.",
+    rating: 5,
+  },
+  {
+    name: "Omar El Allam",
+    role: "Company Owner",
+    quote:
+      "TOP ELD SOLUTIONS transformed how we handle compliance. Their ELD and IFTA support saved us countless hours and kept us audit-ready.",
+    rating: 5,
+  },
+  {
+    name: "Ramel Mowafaq Arabo",
+    role: "Company Owner",
+    quote:
+      "The dispatch team is exceptional — professional, responsive, and they genuinely understand the trucking business.",
     rating: 5,
   },
 ] as const;

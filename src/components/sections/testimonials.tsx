@@ -49,9 +49,7 @@ export function Testimonials() {
                       <p className="font-heading font-semibold text-slate-900">
                         {t.name}
                       </p>
-                      <p className="text-sm text-slate-500">
-                        {t.role} · {t.company}
-                      </p>
+                      <p className="text-sm text-slate-500">{t.role}</p>
                     </div>
                   </article>
                 </CarouselItem>
