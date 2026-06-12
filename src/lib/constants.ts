@@ -373,4 +373,6 @@ export const COMPANY = {
   email: "info@topeldsolutions.com",
   phone: "+1 (800) 555-ELD1",
   address: "Dallas, TX · Serving carriers nationwide",
+  telegram: "https://t.me/Managementeld",
+  telegramHandle: "@Managementeld",
 } as const;

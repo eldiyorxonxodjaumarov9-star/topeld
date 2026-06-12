@@ -1,14 +1,32 @@
 import Link from "next/link";
-import { Globe, Link2, Mail, MapPin, MessageCircle, Phone, Share2 } from "lucide-react";
+import { Globe, Link2, Mail, MapPin, Phone, Share2 } from "lucide-react";
 import { ContactUsButton } from "@/components/ui/contact-us-button";
 import { Logo } from "@/components/ui/logo";
 import { COMPANY, FOOTER_LINKS } from "@/lib/constants";
 
+function TelegramIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
+      fill="currentColor"
+    >
+      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+    </svg>
+  );
+}
+
 const SOCIAL = [
-  { icon: Link2, href: "#", label: "LinkedIn" },
-  { icon: Globe, href: "#", label: "Website" },
-  { icon: Share2, href: "#", label: "Share" },
-  { icon: MessageCircle, href: "#", label: "Messages" },
+  {
+    icon: TelegramIcon,
+    href: COMPANY.telegram,
+    label: `Telegram ${COMPANY.telegramHandle}`,
+    external: true,
+  },
+  { icon: Link2, href: "#", label: "LinkedIn", external: false },
+  { icon: Globe, href: "#", label: "Website", external: false },
+  { icon: Share2, href: "#", label: "Share", external: false },
 ] as const;
 
 export function Footer() {
@@ -24,12 +42,27 @@ export function Footer() {
               {COMPANY.tagline}. Enterprise trucking outsourcing for US motor
               carriers — compliance, dispatch, accounting, and more.
             </p>
-            <div className="mt-6 flex gap-3">
-              {SOCIAL.map(({ icon: Icon, href, label }) => (
+            <a
+              href={COMPANY.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-600 transition-colors hover:text-orange-600"
+            >
+              <TelegramIcon className="size-4 text-orange-600" />
+              <span>
+                Telegram:{" "}
+                <span className="text-orange-600">{COMPANY.telegramHandle}</span>
+              </span>
+            </a>
+            <div className="mt-4 flex gap-3">
+              {SOCIAL.map(({ icon: Icon, href, label, external }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
+                  {...(external
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
                   className="flex size-10 items-center justify-center rounded-xl border border-slate-200 text-slate-500 transition-colors hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600"
                 >
                   <Icon className="size-4" />
@@ -109,6 +142,17 @@ export function Footer() {
                   className="hover:text-orange-600"
                 >
                   {COMPANY.email}
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <TelegramIcon className="size-4 shrink-0 text-orange-600" />
+                <a
+                  href={COMPANY.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-orange-600"
+                >
+                  {COMPANY.telegramHandle}
                 </a>
               </li>
             </ul>
