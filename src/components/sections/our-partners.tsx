@@ -31,23 +31,15 @@ export function OurPartners() {
               transition={{ duration: 0.45, delay: index * 0.06 }}
               className="group overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-md shadow-slate-200/60 transition-shadow hover:shadow-xl hover:shadow-orange-900/10"
             >
-              <div className="flex aspect-[5/3] items-center justify-center bg-slate-50 p-8">
-                {provider.logo.endsWith(".svg") ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={provider.logo}
-                    alt={provider.name}
-                    className="max-h-16 w-full max-w-[220px] object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <Image
-                    src={provider.logo}
-                    alt={provider.name}
-                    width={220}
-                    height={80}
-                    className="max-h-16 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                )}
+              <div className="flex aspect-[5/3] items-center justify-center bg-slate-50 p-6 sm:p-8">
+                <Image
+                  src={provider.logo}
+                  alt={provider.name}
+                  width={220}
+                  height={80}
+                  unoptimized={provider.logo.endsWith(".svg")}
+                  className="max-h-14 w-full max-w-[220px] object-contain transition-transform duration-300 group-hover:scale-105 sm:max-h-16"
+                />
               </div>
 
               <div className="border-t border-slate-100 p-5 text-center">
