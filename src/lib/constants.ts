@@ -167,7 +167,7 @@ export const ELD_PROVIDERS = [
   },
   {
     name: "Samsara",
-    logo: "/partners/samsara-logo.png",
+    logo: "/partners/samsara-logo.svg",
     url: "https://www.samsara.com/",
   },
   {
