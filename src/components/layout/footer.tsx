@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Globe, Link2, Mail, MapPin, Phone, Share2 } from "lucide-react";
+import { Globe, Link2, Mail, Phone, Share2 } from "lucide-react";
 import { ContactUsButton } from "@/components/ui/contact-us-button";
 import { Logo } from "@/components/ui/logo";
 import { COMPANY, FOOTER_LINKS } from "@/lib/constants";
@@ -125,10 +125,6 @@ export function Footer() {
               ))}
             </ul>
             <ul className="mt-8 space-y-3 text-sm text-slate-600">
-              <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-orange-600" />
-                {COMPANY.address}
-              </li>
               <li className="flex min-w-0 items-start gap-2">
                 <Phone className="mt-0.5 size-4 shrink-0 text-orange-600" />
                 <a

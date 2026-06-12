@@ -382,7 +382,6 @@ export const COMPANY = {
   tagline: "Professional ELD & Trucking Support Services",
   email: "topeldmanagement@gmail.com",
   phone: "(971) 351-5506",
-  address: "Dallas, TX · Serving carriers nationwide",
   telegram: "https://t.me/Managementeld",
   telegramHandle: "@Managementeld",
 } as const;
