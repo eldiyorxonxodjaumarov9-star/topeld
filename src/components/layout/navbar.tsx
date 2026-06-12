@@ -74,8 +74,8 @@ export function Navbar() {
               priority
               onDark={!isSolid}
               className={cn(
-                "h-auto w-auto max-w-[calc(100vw-5.5rem)] object-contain object-left transition-[max-height] duration-300 sm:max-w-[18rem]",
-                isSolid ? "max-h-24 sm:max-h-28" : "max-h-28 sm:max-h-32"
+                "h-auto w-full max-w-full object-contain object-left transition-[max-height] duration-300 sm:max-w-[14rem]",
+                isSolid ? "max-h-16 sm:max-h-20" : "max-h-20 sm:max-h-24"
               )}
             />
           </motion.div>

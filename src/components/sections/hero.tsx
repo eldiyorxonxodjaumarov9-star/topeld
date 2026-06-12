@@ -33,25 +33,38 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
-    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    const media = window.matchMedia("(min-width: 1024px)");
+    const startMotion = () => {
+      if (!media.matches) {
+        void motionControls.set({ scale: 1, x: 0 });
+        return;
+      }
 
-    void motionControls.start({
-      scale: isMobile ? [1, 1.03, 1] : [1.05, 1.1, 1.05],
-      x: isMobile ? [0, 0, 0] : [16, -8, 16],
-      transition: {
-        duration: 22,
-        repeat: Infinity,
-        ease: "easeInOut",
-      },
-    });
+      void motionControls.start({
+        scale: [1.05, 1.1, 1.05],
+        x: [16, -8, 16],
+        transition: {
+          duration: 22,
+          repeat: Infinity,
+          ease: "easeInOut",
+        },
+      });
+    };
+
+    startMotion();
+    media.addEventListener("change", startMotion);
+    return () => media.removeEventListener("change", startMotion);
   }, [motionControls]);
 
   return (
     <section
       id="home"
-      className="relative flex min-h-screen min-h-[100dvh] items-center overflow-hidden overflow-x-clip"
+      className="relative isolate flex min-h-screen min-h-[100dvh] w-full max-w-full items-center overflow-hidden"
     >
-      <motion.div animate={motionControls} className="absolute inset-0 will-change-transform">
+      <motion.div
+        animate={motionControls}
+        className="absolute inset-0 overflow-hidden will-change-transform"
+      >
         <video
           ref={videoRef}
           autoPlay
@@ -61,7 +74,7 @@ export function Hero() {
           preload="auto"
           poster={IMAGES.heroPoster}
           aria-hidden
-          className="absolute inset-0 h-full w-full min-h-full min-w-full object-cover object-[58%_center] brightness-[0.48] contrast-[1.2] saturate-[0.92] lg:object-[62%_55%]"
+          className="absolute inset-0 h-full w-full max-w-none object-cover object-[58%_center] brightness-[0.48] contrast-[1.2] saturate-[0.92] lg:object-[62%_55%]"
         >
           <source src={VIDEOS.heroTruck} type="video/mp4" />
         </video>

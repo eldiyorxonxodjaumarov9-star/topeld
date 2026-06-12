@@ -118,7 +118,7 @@ export function EldChatbot() {
   const showStep2 = step === 2;
 
   return (
-    <div className="fixed bottom-4 right-4 left-4 z-[60] flex flex-col items-end gap-3 sm:bottom-6 sm:left-auto sm:right-6">
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-3 p-4 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:items-end sm:p-0">
       <AnimatePresence mode="wait">
         {(view === "closed" || view === "minimized") && (
           <motion.button
@@ -131,7 +131,7 @@ export function EldChatbot() {
             whileTap={{ scale: 0.95 }}
             onClick={handleOpen}
             aria-label="Open TOP ELD BOT"
-            className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-500 text-white shadow-xl shadow-orange-500/40 ring-4 ring-white/20"
+            className="pointer-events-auto flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-orange-500 text-white shadow-xl shadow-orange-500/40 ring-4 ring-white/20"
           >
             <Bot className="size-7" />
             {view === "minimized" && (
@@ -150,7 +150,7 @@ export function EldChatbot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 380, damping: 28 }}
-            className="w-full max-w-[380px] overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl shadow-orange-900/20 backdrop-blur-xl"
+            className="pointer-events-auto w-full max-w-[380px] overflow-hidden rounded-2xl border border-white/20 bg-white/90 shadow-2xl shadow-orange-900/20 backdrop-blur-xl"
           >
             {/* Green header */}
             <div className="flex items-center justify-between bg-gradient-to-r from-orange-500 to-orange-400 px-4 py-3">
@@ -207,9 +207,9 @@ export function EldChatbot() {
                 ) : !showStep2 ? (
                   <motion.div
                     key="step1"
-                    initial={{ opacity: 0, x: -16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 16 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
                   >
                     <div className="rounded-xl border border-orange-100 bg-orange-50/80 p-4">
@@ -243,9 +243,9 @@ export function EldChatbot() {
                 ) : (
                   <motion.div
                     key="step2"
-                    initial={{ opacity: 0, x: 24 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -24 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <p className="font-heading text-base font-semibold text-slate-900">

@@ -15,7 +15,7 @@ export default function HomePage() {
   return (
     <>
       <Navbar />
-      <main className="min-w-0 overflow-x-clip">
+      <main className="w-full max-w-full min-w-0 overflow-x-hidden">
         <Hero />
         <AboutStats />
         <CompanyShowcase />
