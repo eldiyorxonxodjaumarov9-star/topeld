@@ -68,7 +68,7 @@ export function NewsArticleView({ article, related }: NewsArticleViewProps) {
         <Calendar className="size-4" />
         {article.date}
         <span className="rounded-full bg-orange-100 px-2.5 py-0.5 text-[10px] text-orange-700">
-          FMCSA
+          {article.source === "fmcsa" ? "FMCSA" : "Industry Insights"}
         </span>
       </div>
 
@@ -102,8 +102,9 @@ export function NewsArticleView({ article, related }: NewsArticleViewProps) {
       />
 
       <p className="mt-10 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">
-        Source: Federal Motor Carrier Safety Administration (FMCSA) — public
-        government announcement.
+        {article.source === "fmcsa"
+          ? "Source: Federal Motor Carrier Safety Administration (FMCSA) — public government announcement."
+          : "Source: TOP ELD Solutions — industry guidance for carriers and owner-operators."}
       </p>
 
       {related.length > 0 && (

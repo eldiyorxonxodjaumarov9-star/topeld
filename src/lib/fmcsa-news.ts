@@ -282,16 +282,38 @@ async function enrichNewsImages(posts: NewsPost[]): Promise<NewsPost[]> {
   );
 }
 
+function paragraphsToHtml(paragraphs: readonly string[]): string {
+  return paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join("");
+}
+
 function getFallbackNews(limit: number): NewsPost[] {
-  return BLOG_POSTS.slice(0, limit).map((post, index) => ({
-    slug: `fallback-${index + 1}`,
+  return BLOG_POSTS.slice(0, limit).map((post) => ({
+    slug: post.slug,
     title: post.title,
     excerpt: post.excerpt,
     date: post.date,
     image: post.image,
-    url: FMCSA_NEWSROOM_URL,
+    url: `/news/${post.slug}`,
     source: "fallback" as const,
   }));
+}
+
+export function getFallbackArticleBySlug(
+  slug: string
+): FmcsaArticleDetail | null {
+  const post = BLOG_POSTS.find((item) => item.slug === slug);
+  if (!post) return null;
+
+  return {
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    date: post.date,
+    image: post.image,
+    url: `/news/${post.slug}`,
+    source: "fallback",
+    bodyHtml: paragraphsToHtml(post.body),
+  };
 }
 
 async function fetchFmcsaPressReleases(limit: number): Promise<NewsPost[]> {
@@ -444,15 +466,25 @@ export function parseFmcsaArticleHtml(html: string, slug: string): FmcsaArticleD
 export async function getFmcsaArticleBySlug(
   slug: string
 ): Promise<FmcsaArticleDetail | null> {
-  const response = await fetch(`${FMCSA_BASE_URL}/newsroom/${slug}`, {
-    headers: FETCH_HEADERS,
-    next: { revalidate: NEWS_REVALIDATE_SECONDS },
-  });
+  const fallbackArticle = getFallbackArticleBySlug(slug);
+  if (fallbackArticle) {
+    return fallbackArticle;
+  }
 
-  if (!response.ok) return null;
+  try {
+    const response = await fetch(`${FMCSA_BASE_URL}/newsroom/${slug}`, {
+      headers: FETCH_HEADERS,
+      next: { revalidate: NEWS_REVALIDATE_SECONDS },
+    });
 
-  const html = await response.text();
-  return parseFmcsaArticleHtml(html, slug);
+    if (!response.ok) return null;
+
+    const html = await response.text();
+    return parseFmcsaArticleHtml(html, slug);
+  } catch (error) {
+    console.error("[fmcsa-news] Article fetch failed:", slug, error);
+    return null;
+  }
 }
 
 export function getRelatedNews(

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { NewsArticleView } from "@/components/sections/news-article-view";
 import { EldChatbot } from "@/components/widgets/eld-chatbot";
+import { BLOG_POSTS } from "@/lib/constants";
 import {
   getFmcsaArticleBySlug,
   getFmcsaNews,
@@ -37,7 +38,13 @@ export async function generateMetadata({
 
 export async function generateStaticParams() {
   const posts = await getFmcsaNews(12);
-  return posts.map((post) => ({ slug: post.slug }));
+  const slugs = new Set(posts.map((post) => post.slug));
+
+  for (const post of BLOG_POSTS) {
+    slugs.add(post.slug);
+  }
+
+  return [...slugs].map((slug) => ({ slug }));
 }
 
 export default async function NewsArticlePage({ params }: NewsPageProps) {

@@ -36,20 +36,18 @@ function CollageTile({
       viewport={{ once: true }}
       transition={{ delay: index * 0.08 }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl shadow-lg ring-1 ring-orange-900/5",
+        "group relative min-h-[140px] overflow-hidden rounded-2xl shadow-lg ring-1 ring-orange-900/5 sm:min-h-[160px]",
         className
       )}
     >
       <div className="absolute inset-0 z-10 bg-orange-900/10 opacity-0 transition-opacity group-hover:opacity-100" />
-      <div className="relative min-h-[140px] w-full overflow-hidden sm:min-h-[160px]">
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="280px"
-        />
-      </div>
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover transition-transform duration-500 group-hover:scale-105"
+        sizes="(max-width: 1024px) 50vw, 280px"
+      />
     </motion.div>
   );
 }

@@ -295,25 +295,49 @@ export const TESTIMONIALS = [
 
 export const BLOG_POSTS = [
   {
+    slug: "2025-dot-compliance-checklist-for-carriers",
     title: "2025 DOT Compliance Checklist for Carriers",
     excerpt:
       "Essential steps every motor carrier must take to stay audit-ready this year.",
     date: "Mar 12, 2025",
     image: IMAGES.blog1,
+    body: [
+      "Staying DOT-compliant in 2025 requires more than an ELD and a logbook. Carriers face tighter audits, updated safety ratings, and stricter enforcement of hours-of-service and vehicle maintenance rules.",
+      "Start with your authority paperwork: USDOT and MC numbers must be active, insurance filings current, and your MCS-150 updated within the required window. Outdated registrations are one of the fastest ways to trigger a roadside inspection.",
+      "Next, verify your ELD provider is on FMCSA's registered device list and that every driver knows how to transfer logs during an inspection. Audit your last 6 months of records for form and manner errors, unidentified driving time, and missing supporting documents.",
+      "Vehicle maintenance files should include pre-trip inspection records, annual inspections, and repair documentation. Safety policies — drug and alcohol, accident reporting, and driver qualification — must be signed and on file for every active driver.",
+      "TOP ELD Solutions helps carriers run compliance reviews, correct log violations, and prepare for DOT audits before problems become out-of-service orders or authority revocations.",
+    ],
   },
   {
+    slug: "how-outsourcing-dispatch-increases-revenue",
     title: "How Outsourcing Dispatch Increases Revenue",
     excerpt:
       "Why owner-operators are turning to professional dispatch partners.",
     date: "Feb 28, 2025",
     image: IMAGES.blog2,
+    body: [
+      "Owner-operators and small fleets often lose revenue not because of freight rates, but because of downtime spent searching loads, negotiating brokers, and handling paperwork instead of driving.",
+      "Professional dispatch teams monitor multiple load boards, build broker relationships, and book lanes that match your equipment and home time preferences. That means fewer empty miles and more consistent weekly revenue.",
+      "A good dispatch partner also tracks rate confirmations, detention, and lumper receipts so you get paid correctly. They handle check calls and updates so you can focus on safe, compliant driving.",
+      "Outsourcing dispatch reduces the cost of hiring in-house staff while giving you access to experienced negotiators who understand market trends across regions and seasons.",
+      "Carriers working with TOP ELD Solutions combine dispatch support with safety and compliance services — keeping loads moving while protecting your authority and CSA scores.",
+    ],
   },
   {
+    slug: "ifta-reporting-common-mistakes-to-avoid",
     title: "IFTA Reporting: Common Mistakes to Avoid",
     excerpt:
       "Protect your authority with accurate quarterly fuel tax filings.",
     date: "Feb 14, 2025",
     image: IMAGES.blog3,
+    body: [
+      "IFTA reporting errors can lead to penalties, audits, and delayed renewals. Most mistakes come from incomplete mileage records, wrong fuel receipt data, or missing trips across member jurisdictions.",
+      "Every qualified vehicle must track total miles and fuel purchased in each IFTA jurisdiction — not just your home state. Relying on estimates instead of actual odometer and fuel entries is a common audit trigger.",
+      "Keep fuel receipts with date, gallons, state, and vehicle ID. If you use fuel cards, reconcile card reports with your mileage logs quarterly rather than scrambling at filing time.",
+      "Trips under 100 miles or personal conveyance still need clear documentation. Gaps in your records force auditors to assume the worst-case tax liability.",
+      "TOP ELD Solutions offers IFTA reporting support that ties ELD mileage to fuel data, helping you file accurately and avoid costly amendments or jurisdiction penalties.",
+    ],
   },
 ] as const;
 
