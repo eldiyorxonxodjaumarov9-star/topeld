@@ -121,7 +121,7 @@ export function Hero() {
               <ArrowUpRight className="size-4" />
             </ContactUsButton>
             <a
-              href={`tel:${COMPANY.phone.replace(/\D/g, "")}`}
+              href={`tel:+1${COMPANY.phone.replace(/\D/g, "")}`}
               className="inline-flex items-center gap-2.5 text-base font-medium text-white/90 transition-colors hover:text-orange-300"
             >
               <Phone className="size-4 text-orange-400" />

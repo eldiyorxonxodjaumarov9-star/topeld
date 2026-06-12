@@ -131,7 +131,10 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="size-4 shrink-0 text-orange-600" />
-                <a href="tel:+18005553531" className="hover:text-orange-600">
+                <a
+                  href={`tel:+1${COMPANY.phone.replace(/\D/g, "")}`}
+                  className="hover:text-orange-600"
+                >
                   {COMPANY.phone}
                 </a>
               </li>
