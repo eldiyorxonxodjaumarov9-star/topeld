@@ -15,7 +15,7 @@ import { useAboutContactTrigger } from "@/hooks/use-about-contact-trigger";
 const COLLAGE = {
   dashboard: { src: IMAGES.driver, alt: "Professional truck driver" },
   meeting: { src: IMAGES.meeting, alt: "Fleet monitoring and dispatch center" },
-  compliance: { src: IMAGES.compliance, alt: "Safety compliance operations" },
+  compliance: { src: IMAGES.compliance, alt: "Safety compliance documents" },
 } as const;
 
 function CollageVideoTile({

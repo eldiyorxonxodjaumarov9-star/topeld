@@ -10,7 +10,7 @@ export const IMAGES = {
   driver: "/images/about-driver.png",
   dashboard: "/images/about-driver.png",
   meeting: "/images/about-monitoring.png",
-  compliance: "/images/about-monitoring.png",
+  compliance: "/images/compliance.jpg",
   office: "/images/office.jpg",
   videoThumb: "/images/video-thumb.jpg",
   team1: "/images/team1.jpg",
