@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { ContactModalProvider } from "@/components/providers/contact-modal-provider";
 import { PageLoader } from "@/components/providers/page-loader";
+import { SiteVisitTracker } from "@/components/widgets/site-visit-tracker";
 import "./globals.css";
 
 const inter = Inter({
@@ -78,6 +79,7 @@ export default function RootLayout({
       <body className="min-h-screen w-full max-w-full overflow-x-hidden font-sans antialiased">
         <div className="w-full max-w-full overflow-x-hidden">
           <ContactModalProvider>
+            <SiteVisitTracker />
             <PageLoader>{children}</PageLoader>
           </ContactModalProvider>
         </div>
