@@ -5,80 +5,62 @@ import {
   sendTelegramMessage,
 } from "@/lib/telegram";
 
-const ALLOWED_HOSTS = new Set([
-  "topeldsolutions.com",
-  "www.topeldsolutions.com",
-  "localhost",
-  "127.0.0.1",
-]);
+type VisitBody = {
+  path?: string;
+  referrer?: string;
+};
 
-function isAllowedRequest(request: Request): boolean {
-  const origin = request.headers.get("origin");
-  const referer = request.headers.get("referer");
-
-  for (const value of [origin, referer]) {
-    if (!value) continue;
-    try {
-      const host = new URL(value).hostname.toLowerCase();
-      if (ALLOWED_HOSTS.has(host)) return true;
-    } catch {
-      // ignore invalid URLs
-    }
-  }
-
-  return process.env.NODE_ENV === "development";
+function isLikelyBot(userAgent: string): boolean {
+  return /bot|crawler|spider|slurp|facebookexternalhit|preview|headless/i.test(
+    userAgent
+  );
 }
 
-function getDeviceLabel(userAgent: string): string {
-  const ua = userAgent.toLowerCase();
-  if (/ipad|tablet/.test(ua)) return "Tablet";
-  if (/mobile|iphone|android/.test(ua)) return "Mobile";
-  return "Desktop";
-}
-
-function getReferrerLabel(referrer: string): string {
-  if (!referrer.trim()) return "Direct visit";
-
-  try {
-    const host = new URL(referrer).hostname.replace(/^www\./, "");
-    return host || "Direct visit";
-  } catch {
+function formatReferrer(referrer: string): string {
+  if (!referrer || referrer === "direct") {
     return "Direct visit";
   }
-}
 
-function buildPageUrl(request: Request, path: string): string {
-  const forwardedHost = request.headers.get("x-forwarded-host");
-  const host = forwardedHost ?? request.headers.get("host") ?? "topeldsolutions.com";
-  const protocol = request.headers.get("x-forwarded-proto") ?? "https";
-  const safePath = path.startsWith("/") ? path : "/";
-
-  return `${protocol}://${host}${safePath}`;
+  try {
+    const url = new URL(referrer);
+    return url.hostname.replace(/^www\./, "");
+  } catch {
+    return referrer.slice(0, 120);
+  }
 }
 
 export async function POST(request: Request) {
   try {
-    if (!isAllowedRequest(request)) {
-      return NextResponse.json({ error: "Forbidden." }, { status: 403 });
-    }
+    const userAgent = request.headers.get("user-agent") ?? "";
 
-    const body = (await request.json().catch(() => ({}))) as { path?: string };
-    const path =
-      typeof body.path === "string" && body.path.startsWith("/")
-        ? body.path.slice(0, 200)
-        : "/";
+    if (isLikelyBot(userAgent)) {
+      return NextResponse.json({ ok: true, skipped: "bot" });
+    }
 
     if (!isTelegramConfigured()) {
-      return NextResponse.json({ ok: true, skipped: true });
+      console.error(
+        "[telegram/visit] Token or Chat ID missing — fill in src/config/telegram.ts"
+      );
+      return NextResponse.json({ ok: false, skipped: "not_configured" });
     }
 
-    const userAgent = request.headers.get("user-agent") ?? "Unknown";
-    const pageUrl = buildPageUrl(request, path);
+    const body = (await request.json().catch(() => ({}))) as VisitBody;
+    const path = body.path?.trim() || "/";
+    const referrer = formatReferrer(body.referrer?.trim() ?? "");
+
+    const host = request.headers.get("host") ?? "topeldsolutions.com";
+    const protocol = host.includes("localhost") ? "http" : "https";
+    const pageUrl = `${protocol}://${host}${path.startsWith("/") ? path : `/${path}`}`;
+
     const visitedAt = new Date().toLocaleString("en-US", {
       timeZone: "America/Chicago",
       dateStyle: "medium",
       timeStyle: "short",
     });
+
+    const device = /mobile|android|iphone|ipad/i.test(userAgent)
+      ? "Mobile"
+      : "Desktop";
 
     await sendTelegramMessage({
       text: [
@@ -86,11 +68,11 @@ export async function POST(request: Request) {
         "",
         "Someone just opened the website.",
         "",
-        `<b>Page:</b> <a href="${escapeTelegramHtml(pageUrl)}">${escapeTelegramHtml(pageUrl)}</a>`,
-        `<b>Device:</b> ${escapeTelegramHtml(getDeviceLabel(userAgent))}`,
-        `<b>Referrer:</b> ${escapeTelegramHtml(getReferrerLabel(request.headers.get("referer") ?? ""))}`,
+        `<b>Page:</b> ${escapeTelegramHtml(path)}`,
+        `<b>Link:</b> <a href="${escapeTelegramHtml(pageUrl)}">${escapeTelegramHtml(pageUrl)}</a>`,
+        `<b>Referrer:</b> ${escapeTelegramHtml(referrer)}`,
+        `<b>Device:</b> ${device}`,
         `<b>Time:</b> ${escapeTelegramHtml(visitedAt)} (CT)`,
-        "<b>Source:</b> Website visit alert",
       ].join("\n"),
     });
 
