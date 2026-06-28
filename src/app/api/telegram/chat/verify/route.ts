@@ -4,7 +4,6 @@ import {
   ensureWelcomeMessage,
   shortSessionId,
 } from "@/lib/chat-session-store";
-import { isValidAccessCode } from "@/lib/chatbot-access";
 import { validateAccessCode } from "@/lib/chatbot-storage";
 import {
   escapeTelegramHtml,
@@ -32,13 +31,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Session ID is required." }, { status: 400 });
     }
 
-    if (!isValidAccessCode(code)) {
-      return NextResponse.json(
-        { error: "Invalid access code. Please try again." },
-        { status: 403 }
-      );
-    }
-
     ensureWelcomeMessage(sessionId);
 
     if (isTelegramConfigured()) {
@@ -55,6 +47,7 @@ export async function POST(request: Request) {
           "<b>TOP ELD BOT — Chat session started</b>",
           "",
           `<b>Session:</b> #${escapeTelegramHtml(shortSessionId(sessionId))}`,
+          `<b>Code entered:</b> ${escapeTelegramHtml(code)}`,
           `<b>Visitor ID:</b> ${escapeTelegramHtml(sessionId)}`,
           `<b>Time:</b> ${escapeTelegramHtml(submittedAt)}`,
           "",

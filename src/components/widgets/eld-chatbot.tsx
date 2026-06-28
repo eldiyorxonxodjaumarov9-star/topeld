@@ -364,10 +364,10 @@ export function EldChatbot() {
                     className="p-4"
                   >
                     <p className="font-heading text-base font-semibold text-slate-900">
-                      Enter your 6-digit access code
+                      Enter your 6-digit code
                     </p>
                     <p className="mt-1 text-xs text-slate-500">
-                      Enter the code to unlock live chat with our team.
+                      Enter any 6-digit code to unlock live chat with our team.
                     </p>
                     <form onSubmit={handleVerifyCode} className="mt-4 space-y-3">
                       <div>
