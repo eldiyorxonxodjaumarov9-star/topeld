@@ -6,12 +6,9 @@ import { Bot, Minus, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  DEFAULT_CHATBOT_DATA,
   formatAccessCodeInput,
-  loadChatbotData,
-  saveChatbotData,
   validateAccessCode,
-  type EldChatbotData,
+  type EldChatbotStep,
 } from "@/lib/chatbot-storage";
 import { getOrCreateVisitorId } from "@/lib/visitor-id";
 import { cn } from "@/lib/utils";
@@ -30,7 +27,7 @@ const POLL_INTERVAL_MS = 2500;
 
 export function EldChatbot() {
   const [view, setView] = useState<ViewState>("closed");
-  const [data, setData] = useState<EldChatbotData>(DEFAULT_CHATBOT_DATA);
+  const [step, setStep] = useState<EldChatbotStep>(1);
   const [accessCode, setAccessCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [verifying, setVerifying] = useState(false);
@@ -40,27 +37,12 @@ export function EldChatbot() {
   const [sessionId, setSessionId] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const lastPollRef = useRef<string | undefined>(undefined);
-
-  const persist = useCallback((patch: Partial<EldChatbotData>) => {
-    const next = saveChatbotData(patch);
-    setData(next);
-    return next;
-  }, []);
+  const verifyLockRef = useRef(false);
 
   useEffect(() => {
-    const saved = loadChatbotData();
-    setAccessCode(saved.accessCode);
-    setData(saved);
+    localStorage.removeItem("top-eld-chatbot");
     setSessionId(getOrCreateVisitorId());
-
-    if (saved.chatUnlocked) {
-      setView("open");
-    }
-
-    const timer = setTimeout(() => {
-      if (!saved.dismissed) setView("open");
-    }, AUTO_OPEN_DELAY_MS);
-
+    const timer = setTimeout(() => setView("open"), AUTO_OPEN_DELAY_MS);
     return () => clearTimeout(timer);
   }, []);
 
@@ -69,11 +51,11 @@ export function EldChatbot() {
   }, []);
 
   useEffect(() => {
-    if (data.step === "chat") scrollToBottom();
-  }, [messages, data.step, scrollToBottom]);
+    if (step === "chat") scrollToBottom();
+  }, [messages, step, scrollToBottom]);
 
   const pollMessages = useCallback(async () => {
-    if (!sessionId || data.step !== "chat") return;
+    if (!sessionId || step !== "chat") return;
 
     try {
       const params = new URLSearchParams({ sessionId });
@@ -103,15 +85,15 @@ export function EldChatbot() {
     } catch {
       // silent poll failure
     }
-  }, [sessionId, data.step]);
+  }, [sessionId, step]);
 
   useEffect(() => {
-    if (view !== "open" || data.step !== "chat") return;
+    if (view !== "open" || step !== "chat") return;
 
     void pollMessages();
     const timer = setInterval(() => void pollMessages(), POLL_INTERVAL_MS);
     return () => clearInterval(timer);
-  }, [view, data.step, pollMessages]);
+  }, [view, step, pollMessages]);
 
   const loadInitialMessages = useCallback(async (sid: string) => {
     try {
@@ -130,61 +112,76 @@ export function EldChatbot() {
     }
   }, []);
 
-  const handleClose = () => {
-    persist({ dismissed: true });
-    setView("closed");
-  };
+  const verifyAndEnterChat = useCallback(
+    async (code: string) => {
+      const validationError = validateAccessCode(code);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
 
+      if (verifyLockRef.current || verifying) return;
+
+      verifyLockRef.current = true;
+      setVerifying(true);
+      setError(null);
+
+      try {
+        const response = await fetch("/api/telegram/chat/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code, sessionId }),
+        });
+
+        if (!response.ok) {
+          const payload = (await response.json().catch(() => null)) as {
+            error?: string;
+          } | null;
+          throw new Error(payload?.error ?? "Verification failed");
+        }
+
+        setStep("chat");
+        setView("open");
+        await loadInitialMessages(sessionId);
+      } catch (err) {
+        verifyLockRef.current = false;
+        setError(
+          err instanceof Error ? err.message : "Could not start chat. Try again."
+        );
+      } finally {
+        setVerifying(false);
+      }
+    },
+    [sessionId, verifying, loadInitialMessages]
+  );
+
+  const handleClose = () => setView("closed");
   const handleMinimize = () => setView("minimized");
   const handleOpen = () => setView("open");
 
   const handleYes = () => {
-    persist({ acceptedBonus: true, step: 2 });
+    setStep(2);
     setError(null);
+    setAccessCode("");
+    verifyLockRef.current = false;
   };
 
   const handleNoThanks = () => {
-    persist({ acceptedBonus: false, dismissed: true });
     setView("minimized");
   };
 
   const handleVerifyCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    const validationError = validateAccessCode(accessCode);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
+    await verifyAndEnterChat(accessCode);
+  };
 
-    setVerifying(true);
-    setError(null);
+  const handleCodeChange = (value: string) => {
+    const formatted = formatAccessCodeInput(value);
+    setAccessCode(formatted);
+    if (error) setError(validateAccessCode(formatted));
 
-    try {
-      const response = await fetch("/api/telegram/chat/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: accessCode, sessionId }),
-      });
-
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        throw new Error(payload?.error ?? "Verification failed");
-      }
-
-      persist({
-        accessCode,
-        step: "chat",
-        chatUnlocked: true,
-      });
-      await loadInitialMessages(sessionId);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Invalid code. Please try again."
-      );
-    } finally {
-      setVerifying(false);
+    if (formatted.length === 6 && step === 2) {
+      void verifyAndEnterChat(formatted);
     }
   };
 
@@ -238,15 +235,8 @@ export function EldChatbot() {
     }
   };
 
-  const handleCodeChange = (value: string) => {
-    const formatted = formatAccessCodeInput(value);
-    setAccessCode(formatted);
-    persist({ accessCode: formatted });
-    if (error) setError(validateAccessCode(formatted));
-  };
-
-  const showStep2 = data.step === 2;
-  const showChat = data.step === "chat";
+  const showStep2 = step === 2;
+  const showChat = step === "chat";
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-[60] flex flex-col items-center gap-3 p-4 sm:inset-x-auto sm:bottom-6 sm:right-6 sm:items-end sm:p-0">
@@ -367,17 +357,19 @@ export function EldChatbot() {
                       Enter your 6-digit code
                     </p>
                     <p className="mt-1 text-xs text-slate-500">
-                      Enter any 6-digit code to unlock live chat with our team.
+                      Enter any 6-digit code — chat opens automatically.
                     </p>
                     <form onSubmit={handleVerifyCode} className="mt-4 space-y-3">
                       <div>
                         <Input
                           type="text"
                           inputMode="numeric"
+                          autoFocus
                           value={accessCode}
                           onChange={(e) => handleCodeChange(e.target.value)}
                           placeholder="000000"
                           maxLength={6}
+                          disabled={verifying}
                           aria-invalid={!!error}
                           className={cn(
                             "h-11 rounded-xl border-slate-200 bg-white/80 text-center font-mono text-lg tracking-[0.35em]",
@@ -394,16 +386,11 @@ export function EldChatbot() {
                           </motion.p>
                         )}
                         <p className="mt-1.5 text-xs text-slate-500">
-                          {accessCode.length}/6 digits
+                          {verifying
+                            ? "Opening chat..."
+                            : `${accessCode.length}/6 digits`}
                         </p>
                       </div>
-                      <Button
-                        type="submit"
-                        disabled={accessCode.length !== 6 || verifying}
-                        className="h-11 w-full rounded-xl bg-gradient-to-r from-orange-500 to-orange-400 font-semibold text-white shadow-md shadow-orange-500/25 hover:from-orange-500 hover:to-orange-300 disabled:opacity-50"
-                      >
-                        {verifying ? "Verifying..." : "Start Chat"}
-                      </Button>
                     </form>
                   </motion.div>
                 ) : (
