@@ -1,10 +1,10 @@
 /**
  * ═══════════════════════════════════════════════════════════
- *  TELEGRAM SOZLAMALARI
- *  Token va Chat ID ni quyidagi 2 qatorga yozing — tayyor!
+ *  TELEGRAM SOZLAMALARI (bitta bot — hamma funksiya uchun)
+ *  Contact, visit, chatbot — shu token va guruh ID ishlatiladi.
  * ═══════════════════════════════════════════════════════════
  *
- *  1. @BotFather → yangi bot → token oling
+ *  1. @BotFather → bot token
  *  2. Botni guruhga qo'shing (admin)
  *  3. Guruhda xabar yozing, keyin brauzerda oching:
  *     https://api.telegram.org/bot<TOKEN>/getUpdates
