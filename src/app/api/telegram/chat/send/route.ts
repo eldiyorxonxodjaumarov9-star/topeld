@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const userMessage = addChatMessage(sessionId, "user", text);
+    const userMessage = await addChatMessage(sessionId, "user", text);
 
     if (isTelegramConfigured()) {
       await ensureTelegramWebhook();
@@ -45,6 +45,7 @@ export async function POST(request: Request) {
       const { messageId } = await sendTelegramMessage({
         text: [
           `<b>Website chat</b> · #${escapeTelegramHtml(tag)}`,
+          `<code>${escapeTelegramHtml(sessionId)}</code>`,
           "",
           escapeTelegramHtml(text),
           "",
@@ -52,7 +53,7 @@ export async function POST(request: Request) {
         ].join("\n"),
       });
 
-      linkTelegramMessage(messageId, sessionId);
+      await linkTelegramMessage(messageId, sessionId);
     }
 
     return NextResponse.json({ ok: true, message: userMessage });

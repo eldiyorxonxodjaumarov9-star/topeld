@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import {
   addChatMessage,
+  extractFullSessionId,
+  extractSessionTag,
   findSessionByShortId,
   resolveSessionFromTelegramReply,
 } from "@/lib/chat-session-store";
@@ -11,24 +13,49 @@ type TelegramUpdate = {
     message_id: number;
     chat: { id: number };
     text?: string;
-    reply_to_message?: { message_id: number };
+    reply_to_message?: {
+      message_id: number;
+      text?: string;
+      caption?: string;
+    };
     from?: { is_bot?: boolean };
   };
 };
 
-function resolveSessionFromText(text: string): string | null {
-  const match = text.match(/^#([a-z0-9]{6,12})\s+([\s\S]+)$/i);
-  if (!match) return null;
+async function resolveSessionId(
+  message: NonNullable<TelegramUpdate["message"]>
+): Promise<string | undefined> {
+  if (message.reply_to_message?.message_id) {
+    const byReplyId = await resolveSessionFromTelegramReply(
+      message.reply_to_message.message_id
+    );
+    if (byReplyId) return byReplyId;
 
-  const tag = match[1].toLowerCase();
-  const replyText = match[2].trim();
-  if (!replyText) return null;
+    const quoted =
+      message.reply_to_message.text ?? message.reply_to_message.caption ?? "";
 
-  const sessionId = findSessionByShortId(tag);
-  if (!sessionId) return null;
+    const fullId = extractFullSessionId(quoted);
+    if (fullId) return fullId;
 
-  addChatMessage(sessionId, "bot", replyText);
-  return sessionId;
+    const tag = extractSessionTag(quoted);
+    if (tag) {
+      const byTag = await findSessionByShortId(tag);
+      if (byTag) return byTag;
+    }
+  }
+
+  const tagFromBody = extractSessionTag(message.text ?? "");
+  if (tagFromBody) {
+    return findSessionByShortId(tagFromBody);
+  }
+
+  return undefined;
+}
+
+function extractReplyBody(text: string): string {
+  const tagged = text.match(/^#([a-z0-9]{6,12})\s+([\s\S]+)$/i);
+  if (tagged?.[2]) return tagged[2].trim();
+  return text.trim();
 }
 
 export async function POST(request: Request) {
@@ -45,19 +72,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const text = message.text.trim();
-
-    if (message.reply_to_message?.message_id) {
-      const sessionId = resolveSessionFromTelegramReply(
-        message.reply_to_message.message_id
-      );
-      if (sessionId) {
-        addChatMessage(sessionId, "bot", text);
-        return NextResponse.json({ ok: true });
-      }
+    const sessionId = await resolveSessionId(message);
+    if (!sessionId) {
+      console.warn("[telegram/webhook] No session found for reply");
+      return NextResponse.json({ ok: true });
     }
 
-    resolveSessionFromText(text);
+    const replyText = extractReplyBody(message.text);
+    if (!replyText) {
+      return NextResponse.json({ ok: true });
+    }
+
+    await addChatMessage(sessionId, "bot", replyText);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("[telegram/webhook]", error);

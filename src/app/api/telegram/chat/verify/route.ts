@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   addChatMessage,
   ensureWelcomeMessage,
+  registerSession,
   shortSessionId,
 } from "@/lib/chat-session-store";
 import { validateAccessCode } from "@/lib/chatbot-storage";
@@ -11,6 +12,7 @@ import {
   isTelegramConfigured,
   sendTelegramMessage,
 } from "@/lib/telegram";
+import { isRedisConfigured } from "@/lib/redis";
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +33,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Session ID is required." }, { status: 400 });
     }
 
-    ensureWelcomeMessage(sessionId);
+    await registerSession(sessionId);
+    await ensureWelcomeMessage(sessionId);
 
     if (isTelegramConfigured()) {
       await ensureTelegramWebhook();
@@ -48,15 +51,18 @@ export async function POST(request: Request) {
           "",
           `<b>Session:</b> #${escapeTelegramHtml(shortSessionId(sessionId))}`,
           `<b>Code entered:</b> ${escapeTelegramHtml(code)}`,
-          `<b>Visitor ID:</b> ${escapeTelegramHtml(sessionId)}`,
+          `<b>Visitor ID:</b> <code>${escapeTelegramHtml(sessionId)}</code>`,
           `<b>Time:</b> ${escapeTelegramHtml(submittedAt)}`,
+          isRedisConfigured() ? "" : "<b>⚠ Redis not configured — replies may not reach the website.</b>",
           "",
           "<i>Reply to user messages in this group to respond on the website.</i>",
-        ].join("\n"),
+        ]
+          .filter(Boolean)
+          .join("\n"),
       });
     }
 
-    addChatMessage(
+    await addChatMessage(
       sessionId,
       "bot",
       "You're connected! Type your message below — our team will reply shortly."

@@ -89,6 +89,11 @@ function getWebhookBaseUrl(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (siteUrl) return siteUrl.replace(/\/$/, "");
 
+  // Always use production domain for Telegram webhook (not preview URLs)
+  if (process.env.VERCEL_ENV === "production") {
+    return "https://topeldsolutions.com";
+  }
+
   const vercelUrl = process.env.VERCEL_URL?.trim();
   if (vercelUrl) return `https://${vercelUrl}`;
 

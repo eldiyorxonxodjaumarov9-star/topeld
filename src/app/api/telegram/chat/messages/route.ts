@@ -10,6 +10,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Session ID is required." }, { status: 400 });
   }
 
-  const messages = getChatMessages(sessionId, since);
+  const messages = await getChatMessages(sessionId, since);
   return NextResponse.json({ messages });
 }
