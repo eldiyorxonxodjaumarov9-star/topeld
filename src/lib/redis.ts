@@ -5,8 +5,13 @@ let redis: Redis | null | undefined;
 export function getRedis(): Redis | null {
   if (redis !== undefined) return redis;
 
-  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+  // Upstash direct OR Vercel Marketplace KV env names
+  const url =
+    process.env.UPSTASH_REDIS_REST_URL?.trim() ||
+    process.env.KV_REST_API_URL?.trim();
+  const token =
+    process.env.UPSTASH_REDIS_REST_TOKEN?.trim() ||
+    process.env.KV_REST_API_TOKEN?.trim();
 
   if (!url || !token) {
     redis = null;
