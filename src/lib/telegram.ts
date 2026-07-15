@@ -89,28 +89,34 @@ function getWebhookBaseUrl(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (siteUrl) return siteUrl.replace(/\/$/, "");
 
-  // Always use production domain for Telegram webhook (not preview URLs)
+  // Apex domain 308 → www, so Telegram webhook MUST use www (no redirects).
   if (process.env.VERCEL_ENV === "production") {
-    return "https://topeldsolutions.com";
+    return "https://www.topeldsolutions.com";
   }
 
   const vercelUrl = process.env.VERCEL_URL?.trim();
   if (vercelUrl) return `https://${vercelUrl}`;
 
-  return "https://topeldsolutions.com";
+  return "https://www.topeldsolutions.com";
 }
 
 const WEBHOOK_FLAG = "__topeld_webhook_ready__";
+const WEBHOOK_URL_FLAG = "__topeld_webhook_url__";
 
 /** Mavjud bot tokeni bilan webhook ni avtomatik ulash (yangi bot kerak emas). */
-export async function ensureTelegramWebhook(): Promise<boolean> {
+export async function ensureTelegramWebhook(force = false): Promise<boolean> {
   const token = getTelegramBotToken();
   if (!token) return false;
 
-  const g = globalThis as typeof globalThis & { [WEBHOOK_FLAG]?: boolean };
-  if (g[WEBHOOK_FLAG]) return true;
-
   const webhookUrl = `${getWebhookBaseUrl()}/api/telegram/webhook`;
+  const g = globalThis as typeof globalThis & {
+    [WEBHOOK_FLAG]?: boolean;
+    [WEBHOOK_URL_FLAG]?: string;
+  };
+
+  if (!force && g[WEBHOOK_FLAG] && g[WEBHOOK_URL_FLAG] === webhookUrl) {
+    return true;
+  }
 
   try {
     const response = await fetch(
@@ -121,6 +127,7 @@ export async function ensureTelegramWebhook(): Promise<boolean> {
         body: JSON.stringify({
           url: webhookUrl,
           allowed_updates: ["message"],
+          drop_pending_updates: false,
         }),
       }
     );
@@ -128,6 +135,7 @@ export async function ensureTelegramWebhook(): Promise<boolean> {
     const payload = (await response.json()) as { ok?: boolean; description?: string };
     if (payload.ok) {
       g[WEBHOOK_FLAG] = true;
+      g[WEBHOOK_URL_FLAG] = webhookUrl;
       return true;
     }
 
